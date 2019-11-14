@@ -1,23 +1,56 @@
-# NOTE
+## OYE added
+This docker images is for serving brat via a full web server using Apache.
+As the official website said:  
+> For security reasons, we strongly recommend serving brat via a full web server 
+such as Apache in production environments.
 
+### Changes
+1. Not create volume like the author do, to use **a folder in the Host**  
+Reason: if use `docker volume create` to create a volume, you have to use 
+`docker volume inspect` to show the local storage in your PC, like the following:  
+```bash
+[
+    {
+        "CreatedAt": "2019-11-14T03:24:19Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/brat-data/_data",
+        "Name": "brat-data",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+```
+the data is stored in `/var/lib/docker/volumes/brat-data/_data`, you have to copy 
+your data to the folder.
+
+2. Add image build
+
+3. Change image run
+
+# NOTE
 I am no longer doing anything with brat and am not maintaining this at all. 
 
 # brat docker
-
 This is a docker container deploying an instance of [brat](http://brat.nlplab.org/).
 
 
-### Installation
-
-You will need two volumes to pass annotation data and user configuration to the container. 
-Start by creating a named volume for each of them like this:
-
+### Preparation
+~~You will need two volumes to pass annotation data and user configuration to the container. 
+Start by creating a named volume for each of them like this:~~
 ```bash
 $ docker volume create --name brat-data
 $ docker volume create --name brat-cfg
 ```
 
-The `brat-data` volume should be linked to your annotation data, and the `brat-cfg` volume should contain a file called `users.json`.
+You can create two folder pass annotation data and user configuration to the container.
+```bash
+mkdir brat-data
+mkdir brat-cfg
+```
+
+
+The folder `brat-data` should be linked to your annotation data, and the `brat-cfg` should contain a file called `users.json`.
 To add multiple users to the server use `users.json` to list your users and their passwords like so:
 
 ```javascript
@@ -43,17 +76,16 @@ $ exit
 $ docker rm brat-tmp
 ```
 
-Or, if you have data on the host machine, you can check where docker is keeping the named volume with: 
+Or, if you have data on the host machine, you can just copy the data into there from your host.
 
+### Build
+Build a brat image named `brat:v0.1`
 ```bash
-$ docker volume inspect brat-data 
+docker build -it -n brat:v0.1 .
 ```
-and you can just copy the data into there from your host.
 
-
-### Running
-
+### Run
 To run the container you need to specify a username, password and email address for BRAT as environment variables when you start the container. This user will have editor permissions.
 ```bash
-$ docker run --name=brat -d -p 80:80 -v brat-data:/bratdata -v brat-cfg:/bratcfg -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com cassj/brat
+docker run --name=brat -d -p 80:80 -v brat-data:/bratdata -v brat-cfg:/bratcfg -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com brat:v0.1
 ```
