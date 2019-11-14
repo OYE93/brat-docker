@@ -24,9 +24,9 @@ Reason: if use `docker volume create` to create a volume, you have to use
 the data is stored in `/var/lib/docker/volumes/brat-data/_data`, you have to copy 
 your data to the folder.
 
-2. Add image build
+2. Add image [Build](https://github.com/OYE93/brat-docker#build)
 
-3. Change image run
+3. Change image [Run](https://github.com/OYE93/brat-docker#run)
 
 # NOTE
 I am no longer doing anything with brat and am not maintaining this at all. 
@@ -81,7 +81,7 @@ Or, if you have data on the host machine, you can just copy the data into there 
 ### Build
 Build a brat image named `brat:v0.1`
 ```bash
-docker build -it -n brat:v0.1 .
+docker build -t brat:v0.1 .
 ```
 
 ### Run
