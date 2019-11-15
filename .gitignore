@@ -1,5 +1,5 @@
 *.swp
 .idea
 .DS_Store
-.brat\-data
-.brat\-cfg
+.brat_data
+.brat_cfg

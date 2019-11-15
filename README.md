@@ -14,20 +14,20 @@ such as Apache in production environments.
         "CreatedAt": "2019-11-14T03:24:19Z",
         "Driver": "local",
         "Labels": {},
-        "Mountpoint": "/var/lib/docker/volumes/brat-data/_data",
-        "Name": "brat-data",
+        "Mountpoint": "/var/lib/docker/volumes/brat_data/_data",
+        "Name": "brat_data",
         "Options": {},
         "Scope": "local"
     }
 ]
 ```
-you think the data is stored in `/var/lib/docker/volumes/brat-data/_data`?    **NO!**  
+you think the data is stored in `/var/lib/docker/volumes/brat_data/_data`?    **NO!**  
 reference to <https://stackoverflow.com/questions/38532483/where-is-var-lib-docker-on-mac-os-x>, 
 this folder just resides on the Docker host VM (the Alpine Linux ran by xhyve). You can run 
 ```bash
 screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty
 ```
-then, press `Enter` to connect the Mac VM, and you can reach the data in `/var/lib/docker/volumes/brat-data/_data`  
+then, press `Enter` to connect the Mac VM, and you can reach the data in `/var/lib/docker/volumes/brat_data/_data`  
 Now, you can use `copy` to copy the data to this folder.  
 Some commands you may need during the process:  
 - disconnect that session but leave it open in background
@@ -56,13 +56,13 @@ path of the folder you want to mount, and when you run the image, you should set
 
 ```bash
 docker: Error response from daemon: Mounts denied: 
-The paths /brat-cfg and /brat-data
+The paths /brat_cfg and /brat_data
 are not shared from OS X and are not known to Docker.
 You can configure shared paths from Docker -> Preferences... -> File Sharing.
 ```
 
-2. Not use `brat-cfg` for user configuration, because we only use one user, which can be set
-when run the image, change `brat-crf` to store project configuration.
+2. Not use `brat_cfg` for user configuration, because we only use one user, which can be set
+when run the image, change `brat_crf` to store project configuration.
 - modify `Dockerfile`, add `line 36`, comment `line 51`
 - modify `brat_install_wrapper.sh`, don't run `user_patch.py`
 
@@ -82,18 +82,18 @@ There are two ways to create the mounted folder:
 1. You will need two volumes to pass annotation data and user configuration to the container. 
 Start by creating a named volume for each of them like this:
 ```bash
-docker volume create --name brat-data
-docker volume create --name brat-cfg
+docker volume create --name brat_data
+docker volume create --name brat_cfg
 ```
 
 2. You can create two folder pass annotation data and user configuration to the container.
 ```bash
-mkdir brat-data
-mkdir brat-cfg
+mkdir brat_data
+mkdir brat_cfg
 ```
 
 
-The folder `brat-data` should be linked to your annotation data, the folder `brat-cfg`
+The folder `brat_data` should be linked to your annotation data, the folder `brat_cfg`
 should be linked to your annotation project configurations.
 ~~and the `brat-cfg` should contain a file called `users.json`.
 To add multiple users to the server use `users.json` to list your users and their passwords like so:~~
@@ -114,7 +114,7 @@ you'll have to use a data-only container and `--volumes-from` instead.
 You can also add data and edit the users from within the container. 
 To add some data directly inside the container do something like:
 ``` bash
-$ docker run --name=brat-tmp -it -v brat-data:/bratdata cassj/brat /bin/bash
+$ docker run --name=brat-tmp -it -v brat_data:/bratdata cassj/brat /bin/bash
 $ cd /bratdata
 $ wget http://my.url/some-dataset.tgz
 $ tar -xvzf some-dataset.tgz
@@ -137,10 +137,10 @@ According to [Preparation](https://github.com/OYE93/brat-docker#preparation), th
 folder, so there are also two ways to run the image:
 1. run:
 ```bash
-docker run --name=brat -d -p 80:80 -v brat-data:/bratdata -v brat-cfg:/bratcfg -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com brat:v0.1
+docker run --name=brat -d -p 80:80 -v brat_data:/bratdata -v brat_cfg:/bratcfg -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com brat:v0.1
 ```
 2. Firstly, configure the shared paths from `Docker -> Preferences... -> File Sharing`, add the full
 path of the folder you want to mount, then run:  
 ```bash
-docker run --name=brat -d -p 80:80 -v $FULL_PATH_OF_brat-data:/bratdata -v $FULL_PATH_OF_brat-cfg:/bratcfg -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com brat:v0.1
+docker run --name=brat -d -p 80:80 -v $FULL_PATH_OF_brat_data:/bratdata -v $FULL_PATH_OF_brat_cfg:/bratcfg -e BRAT_USERNAME=brat -e BRAT_PASSWORD=brat -e BRAT_EMAIL=brat@example.com brat:v0.1
 ``` 
