@@ -31,7 +31,9 @@ RUN chown -R www-data:www-data /bratdata /bratcfg
 RUN chmod o-rwx /bratdata /bratcfg
 # create a symbolic link (also known as a symlink or soft link) using ln
 RUN ln -s /bratdata /var/www/brat/brat-v1.3_Crunchy_Frog/data
-RUN ln -s /bratcfg /var/www/brat/brat-v1.3_Crunchy_Frog/cfg 
+# RUN ln -s /bratcfg /var/www/brat/brat-v1.3_Crunchy_Frog/cfg
+# change to project configurations
+RUN ln -s /bratcfg /var/www/brat/brat-v1.3_Crunchy_Frog/configurations
 
 # And make that location a volume
 VOLUME /bratdata
@@ -46,7 +48,7 @@ RUN chown -R www-data:www-data /var/www/brat/brat-v1.3_Crunchy_Frog/
 ADD 000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # add the user patching script
-ADD user_patch.py /var/www/brat/brat-v1.3_Crunchy_Frog/user_patch.py
+# ADD user_patch.py /var/www/brat/brat-v1.3_Crunchy_Frog/user_patch.py
 
 # Enable cgi
 # a2enmod is a script that enables the specified module within the apache2 configuration

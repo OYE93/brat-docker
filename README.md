@@ -5,8 +5,8 @@ As the official website said:
 such as Apache in production environments.
 
 ### Changes
-1. Not create volume like the author do, to use **a folder in the Host**  
-Reason: if use `docker volume create` to create a volume, you have to use 
+1. Not create volume like the author do (especially for Mac/OS X), instead use **a folder in the Host**  
+**Reason: **if use `docker volume create` to create a volume, you have to use 
 `docker volume inspect` to show the local storage in your PC, like the following:  
 ```bash
 [
@@ -21,8 +21,32 @@ Reason: if use `docker volume create` to create a volume, you have to use
     }
 ]
 ```
-the data is stored in `/var/lib/docker/volumes/brat-data/_data`, you have to copy 
-your data to the folder.
+you think the data is stored in `/var/lib/docker/volumes/brat-data/_data`?    **NO!**  
+reference to <https://stackoverflow.com/questions/38532483/where-is-var-lib-docker-on-mac-os-x>, 
+this folder just resides on the Docker host VM (the Alpine Linux ran by xhyve). You can run 
+```bash
+screen ~/Library/Containers/com.docker.docker/Data/vms/0/tty
+```
+then, press `Enter` to connect the Mac VM, and you can reach the data in `/var/lib/docker/volumes/brat-data/_data`  
+Now, you can use `copy` to copy the data to this folder.  
+Some commands you may need during the process:  
+- disconnect that session but leave it open in background
+```bash
+Ctrl-a d
+```
+- list that session that's still running in background
+```bash
+screen -ls
+```
+- reconnect to that session (don't open a new one, that won't work and 2nd tty will give you garbled screen)
+```
+screen -r
+```
+- kill this session (window) and exit
+```
+Ctrl-a k
+```
+
 
 **NOTE:** 
 If you want to use a local folder, and you are using docker in `OS X`, you should 
@@ -37,10 +61,14 @@ are not shared from OS X and are not known to Docker.
 You can configure shared paths from Docker -> Preferences... -> File Sharing.
 ```
 
+2. Not use `brat-cfg` for user configuration, because we only use one user, which can be set
+when run the image, change `brat-crf` to store project configuration.
+- modify `Dockerfile`, add `line 36`, comment `line 51`
+- modify `brat_install_wrapper.sh`, don't run `user_patch.py`
 
-2. Add image [Build](https://github.com/OYE93/brat-docker#build)
+3. Add image [Build](https://github.com/OYE93/brat-docker#build)
 
-3. Change image [Run](https://github.com/OYE93/brat-docker#run)
+4. Change image [Run](https://github.com/OYE93/brat-docker#run)
 
 ## NOTE
 I am no longer doing anything with brat and am not maintaining this at all. 
@@ -65,9 +93,10 @@ mkdir brat-cfg
 ```
 
 
-The folder `brat-data` should be linked to your annotation data, 
-and the `brat-cfg` should contain a file called `users.json`.
-To add multiple users to the server use `users.json` to list your users and their passwords like so:
+The folder `brat-data` should be linked to your annotation data, the folder `brat-cfg`
+should be linked to your annotation project configurations.
+~~and the `brat-cfg` should contain a file called `users.json`.
+To add multiple users to the server use `users.json` to list your users and their passwords like so:~~
 
 ```javascript
 {
