@@ -38,7 +38,7 @@ Ctrl-a d
 ```bash
 screen -ls
 ```
-- reconnect to that session (don't open a new one, that won't work and 2nd tty will give you garbled screen)
+- reconnect to that session (**don't open a new one, that won't work and 2nd tty will give you garbled screen**)
 ```
 screen -r
 ```
